@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GPStest</string>
+    <string name="run_service">Lancer le service</string>
+    <string name="stop_service">Stopper le service</string>
+</resources>
