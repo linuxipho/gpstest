@@ -10,47 +10,51 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.ekylibre.gpstest.database.AppDatabase;
+import com.ekylibre.gpstest.database.models.Point;
+
 
 @SuppressLint("LogNotTimber")
 public class LocationService extends Service {
 
-    private static final String TAG = "LoationService";
-    private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 10f;
+    private static final String TAG = "LocationService";
+    private static final int INTERVAL = 1000;
+    private static final int DISTANCE = 1;
+
     private LocationManager locationManager = null;
+    private AppDatabase database;
 
     private class LocationListener implements android.location.LocationListener {
 
         Location location;
 
-        public LocationListener(String provider) {
-            Log.i(TAG, String.format("LocationListener %s", provider));
+        LocationListener(String provider) {
             location = new Location(provider);
         }
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.i(TAG, String.format("onLocationChanged: %s", location));
+            database.dao().insert(new Point(location.getTime(), location.getLatitude(), location.getLongitude()));
+            Log.i(TAG, String.format("onLocationChanged: %s %s %s %s", location.getLatitude(), location.getLongitude(), location.getAccuracy(), location.getTime()));
             this.location.set(location);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.i(TAG, String.format("onProviderDisabled: %s", provider));
+            Log.i(TAG, "GPS disabled");
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.i(TAG, String.format("onProviderEnabled: %s", provider));
+            Log.i(TAG, "GPS enabled");
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.i(TAG, String.format("onStatusChanged: %s", provider));
-        }
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
 
     LocationListener locationListener = new LocationListener(LocationManager.GPS_PROVIDER);
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -66,16 +70,19 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
-        Log.e(TAG, "onCreate");
+
+        Log.d(TAG, "onCreate");
+
         initializeLocationManager();
         try {
             locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, locationListener);
+                    LocationManager.GPS_PROVIDER, INTERVAL, DISTANCE, locationListener);
         } catch (java.lang.SecurityException ex) {
             Log.e(TAG,"fail to request location update, ignore --> " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
             Log.e(TAG, "gps provider does not exist " + ex.getMessage());
         }
+        database = AppDatabase.getInstance(getApplicationContext());
     }
 
     @Override
@@ -86,7 +93,7 @@ public class LocationService extends Service {
             try {
                 locationManager.removeUpdates(locationListener);
             } catch (Exception ex) {
-                Log.e(TAG,"fail to remove location listners, ignore" + ex.getMessage());
+                Log.e(TAG,"fail to remove location listeners, ignore" + ex.getMessage());
             }
         }
     }
@@ -94,7 +101,7 @@ public class LocationService extends Service {
     private void initializeLocationManager() {
         Log.e(TAG, "initializeLocationManager");
         if (locationManager == null) {
-            locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
     }
 }
