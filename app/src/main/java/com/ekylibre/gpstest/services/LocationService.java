@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -34,7 +35,7 @@ public class LocationService extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
-            database.dao().insert(new Point(location.getTime(), location.getLatitude(), location.getLongitude()));
+            new WriteDatabaseTask(location).execute();
             Log.i(TAG, String.format("onLocationChanged: %s %s %s %s", location.getLatitude(), location.getLongitude(), location.getAccuracy(), location.getTime()));
             this.location.set(location);
         }
@@ -102,6 +103,23 @@ public class LocationService extends Service {
         Log.e(TAG, "initializeLocationManager");
         if (locationManager == null) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
+    class WriteDatabaseTask extends AsyncTask<Void, Void, Void> {
+
+        private Location location;
+
+        WriteDatabaseTask(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            database.dao().insert(new Point(location.getTime(), location.getLatitude(), location.getLongitude()));
+
+            return null;
         }
     }
 }
