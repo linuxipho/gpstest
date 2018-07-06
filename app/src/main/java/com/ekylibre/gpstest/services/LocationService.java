@@ -106,7 +106,7 @@ public class LocationService extends Service {
         }
     }
 
-    class WriteDatabaseTask extends AsyncTask<Void, Void, Void> {
+    private class WriteDatabaseTask extends AsyncTask<Void, Void, Void> {
 
         private Location location;
 
@@ -117,7 +117,9 @@ public class LocationService extends Service {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            database.dao().insert(new Point(location.getTime(), location.getLatitude(), location.getLongitude()));
+            database.dao().insert(
+                    new Point(location.getTime(), location.getLatitude(), location.getLongitude(),
+                            Math.round(location.getSpeed()*36f)/10.0f, (int) location.getAccuracy()));
 
             return null;
         }

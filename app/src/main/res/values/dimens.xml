@@ -1,0 +1,6 @@
+<resources>
+
+    <dimen name="layout_padding">16dp</dimen>
+    <dimen name="word_margin">6dp</dimen>
+
+</resources>

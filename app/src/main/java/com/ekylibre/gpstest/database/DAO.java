@@ -16,5 +16,4 @@ public interface DAO {
     @Query("SELECT * FROM points ORDER BY id DESC LIMIT 1")
     LiveData<Point> getLastPoint();
 
-
 }

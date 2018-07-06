@@ -12,11 +12,15 @@ public class Point {
     public long time;
     public double lat;
     public double lon;
+    public float speed;
+    public int accuracy;
 
 
-    public Point(long time, double lat, double lon) {
+    public Point(long time, double lat, double lon, float speed, int accuracy) {
         this.time = time;
         this.lat = lat;
         this.lon = lon;
+        this.speed = speed;
+        this.accuracy = accuracy;
     }
 }
