@@ -5,18 +5,23 @@ import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ekylibre.gpstest.database.AppDatabase;
 import com.ekylibre.gpstest.services.LocationService;
 
+
+import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.Point;
+import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.turf.TurfJoins;
 
@@ -25,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////
         // Point in Polygon test
         /////////////////////////
-        String polyJson = "[[" +
+        String polyJson = "{'TYPE': 'Polygon', 'coordinates':[[" +
                 "[3.871908187866211, 43.6287407970948], " +
                 "[3.872852325439453, 43.6284845248581], " +
                 "[3.873040080070496, 43.6283253248881], " +
@@ -79,20 +86,23 @@ public class MainActivity extends AppCompatActivity {
                 "[3.871935009956360, 43.6272575093126], " +
                 "[3.871344923973084, 43.6276652229529], " +
                 "[3.871103525161743, 43.6282981443633], " +
-                "[3.871908187866211, 43.6287407970947]" +
-                "]]";
+                "[3.871908187866211, 43.6287407970947]]]" +
+                "}";
 
-        List<LatLng> polygon = new ArrayList<>();
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.6284845248581, 3.8728523254394536));
-        polygon.add(new LatLng(43.62874079709478, 3.873040080070496));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
-        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        List<LatLng> polygon = new ArrayList<>();
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.6284845248581, 3.8728523254394536));
+//        polygon.add(new LatLng(43.62874079709478, 3.873040080070496));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+//        polygon.add(new LatLng(43.62874079709478, 3.8719081878662114));
+
+        Polygon polygon = Polygon.fromJson(polyJson);
+        Log.e("GPS", "Polygon --> " + polygon);
 
 
 //        TurfJoins.inside(Point.fromLngLat();
